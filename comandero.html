@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comandero - Bar "Los Litros"</title>
+    <link rel="stylesheet" href="./frontend/css/global.css">
+    <link rel="stylesheet" href="./frontend/css/comandero.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <div class="comandero-container">
+        <!-- Encabezado -->
+        <div class="comandero-header">
+            <div class="comandero-header-content">
+                <h1>Comandero</h1>
+                <p>Panel de trabajo - SOFTINVENT</p>
+            </div>
+            <div class="menu-icon" id="menuToggle">
+                <i class="fas fa-bars"></i>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="#perfil"><i class="fas fa-user"></i>Perfil</a>
+                    <a href="#terminos"><i class="fas fa-file-contract"></i>Términos y condiciones</a>
+                    <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="comandero-main">
+            <!-- Sección de bienvenida -->
+            <div class="welcome-section">
+                <h2>Hola 👋</h2>
+                <p>Bienvenido al sistema de comandero de SOFTINVENT. Aquí puedes visualizar y gestionar las órdenes del bar.</p>
+                
+                <!-- Información del usuario -->
+                <div class="user-info">
+                    <div class="user-info-item">
+                        <span class="user-info-label">USUARIO</span>
+                        <span class="user-info-value" id="displayUsername">--</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">ROL</span>
+                        <span class="user-info-value" id="displayRol">--</span>
+                    </div>
+                    <div class="user-info-item">
+                        <span class="user-info-label">ESTADO</span>
+                        <span class="user-info-value status-connected">CONECTADO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accesos rápidos -->
+            <div class="cards-grid">
+                <div class="card" onclick="navigateTo('#ordenes')">
+                    <div class="card-icon"><i class="fas fa-list"></i></div>
+                    <h3>Órdenes activas</h3>
+                    <p>Visualiza las órdenes en proceso en el sistema.</p>
+                </div>
+
+                <div class="card" onclick="navigateTo('#historial')">
+                    <div class="card-icon"><i class="fas fa-history"></i></div>
+                    <h3>Historial</h3>
+                    <p>Consulta el registro de órdenes completadas.</p>
+                </div>
+
+                <div class="card" onclick="navigateTo('#mesas')">
+                    <div class="card-icon"><i class="fas fa-table"></i></div>
+                    <h3>Mesas</h3>
+                    <p>Visualiza el estado de las mesas el bar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       
+
+        // Toggle del menú
+        document.getElementById('menuToggle').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.remove('active');
+        });
+
+        // Cerrar sesión
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                // Limpiar localStorage y redirigir al login
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Función para navegar a secciones
+        function navigateTo(section) {
+            console.log('Navegando a:', section);
+            alert('Funcionalidad próximamente disponible: ' + section);
+        }
+    </script>
+</body>
+</html>

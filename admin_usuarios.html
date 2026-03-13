@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrar usuarios</title>
+
+<link rel="stylesheet" href="frontend/css/global.css">
+<link rel="stylesheet" href="frontend/css/admin_usuarios.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="topbar">
+    <a href="admin.php" class="back-btn">←</a>
+    <h1>Administrar usuarios</h1>
+</header>
+
+<div class="container">
+
+<div class="acciones">
+<button class="btn-primary">+ Nuevo usuario</button>
+<input type="text" placeholder="Buscar usuario...">
+</div>
+
+<table class="tabla">
+<thead>
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Rol</th>
+<th>Estado</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody>
+<!-- filas generadas dinámicamente -->
+</tbody>
+</table>
+
+</div>
+
+<script src="frontend/js/admin_usuarios.js"></script>
+
+</body>
+</html>

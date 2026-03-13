@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrar usuario</title>
+
+<link rel="stylesheet" href="frontend/css/global.css">
+<link rel="stylesheet" href="frontend/css/admin_registrar_usuario.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="topbar">
+    <a href="javascript:history.back()" class="back-btn">←</a>
+    <h1>Registrar usuario</h1>
+</header>
+
+<div class="form-container">
+
+<form id="adminRegisterForm">
+
+    <label>Nombre</label>
+    <input type="text" id="admin-username" required>
+
+    <label>Contraseña</label>
+    <input type="password" id="admin-password" required>
+
+    <label>Rol</label>
+    <select id="admin-rol" required>
+        <option value="" disabled selected>Selecciona un Rol</option>
+        <!-- se llenará dinámicamente -->
+    </select>
+
+    <button type="submit">Crear usuario</button>
+
+</form>
+
+</div>
+
+<script src="frontend/js/admin_registrar.js"></script>
+
+</body>
+</html>

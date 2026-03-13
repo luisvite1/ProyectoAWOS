@@ -1,0 +1,57 @@
+/* register.css - styles specific to registration page */
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-card{
+    background: var(--color-light);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: var(--color-dark);
+}
+
+.auth-card h1{
+    font-size: 1.75rem;
+    color: var(--color-dark);
+    margin-bottom: 1.5rem;
+}
+
+.auth-footer{
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--color-dark);
+}
+
+/* override form fields */
+.auth-card input,
+.auth-card select {
+    background: #fff;
+    color: var(--color-dark);
+    border: 1px solid #ccc;
+}
+
+/* add more spacing to form groups */
+.auth-card .form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* enhance button prominence */
+.auth-card .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+}
+
+.auth-card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}

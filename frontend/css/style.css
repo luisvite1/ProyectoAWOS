@@ -1,0 +1,85 @@
+/* Estilos base para centrar todo */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* El contenedor tipo "tarjeta" */
+.auth-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-card h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* Campos de entrada */
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box; /* Evita que el padding ensanche el input */
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #28a745;
+}
+
+/* Botón principal */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745; /* Verde como en tu imagen */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+
+/* Enlaces inferiores */
+.auth-footer {
+    margin-top: 1.5rem;
+    font-size: 14px;
+    color: #666;
+}
+
+.auth-footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

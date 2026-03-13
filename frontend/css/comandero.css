@@ -1,0 +1,165 @@
+/* comandero.css - styles for comandero panel */
+
+body{
+    background-color: var(--color-dark);
+    color: var(--color-light);
+}
+
+.comandero-container{
+    min-height: 100vh;
+}
+
+.comandero-header{
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--color-light);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.comandero-header-content h1{
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.comandero-header-content p{
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.comandero-main{
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcome-section{
+    background: var(--color-secondary);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2rem 8px rgba(0,0,0,0.3);
+    margin-bottom: 2rem;
+}
+
+.welcome-section h2{
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-light);
+}
+
+.welcome-section p{
+    margin: 0;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.user-info{
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--color-secondary);
+    border-radius: var(--radius);
+}
+
+.user-info-item{
+    display: flex;
+    flex-direction: column;
+}
+
+.user-info-label{
+    font-size: 0.75rem;
+    color: #999;
+    font-weight: 600;
+}
+
+.user-info-value{
+    font-size: 1rem;
+    color: var(--color-light);
+    font-weight: 600;
+}
+
+.status-connected{
+    color: #28a745;
+}
+
+.cards-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card{
+    background: var(--color-secondary);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all var(--transition) ease;
+    cursor: pointer;
+    border-left: 4px solid #f093fb;
+}
+
+.card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.card-icon{
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #f093fb;
+}
+
+.card h3{
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    color: var(--color-light);
+}
+
+.card p{
+    margin: 0;
+    color: #ccc;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.card:nth-child(2){
+    border-left-color: #f5576c;
+}
+.card:nth-child(2) .card-icon{
+    color: #f5576c;
+}
+
+.card:nth-child(3){
+    border-left-color: #4facfe;
+}
+.card:nth-child(3) .card-icon{
+    color: #4facfe;
+}
+
+@media (max-width:768px){
+    .comandero-header{
+        flex-direction: column;
+        text-align: center;
+    }
+    .comandero-header-content h1{
+        font-size: 1.25rem;
+    }
+    .menu-icon{
+        margin-top: 1rem;
+    }
+    .cards-grid{
+        grid-template-columns: 1fr;
+    }
+    .comandero-main{
+        padding: 1rem;
+    }
+    .user-info{
+        flex-wrap: wrap;
+    }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar "Los Litros" - Registro</title>
+    <link rel="stylesheet" href="./frontend/css/global.css">
+    <link rel="stylesheet" href="./frontend/css/register.css">
+</head>
+<body>
+
+    <div class="auth-card">
+        <a href="index.html" class="back-btn">←</a>
+        <h1>Registrar Usuario</h1>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <input type="text" id="reg-username" placeholder="Nombre de Usuario" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="reg-password" placeholder="Contraseña" required>
+            </div>
+
+            <div class="form-group">
+                <select id="reg-rol" required>
+                    <option value="" disabled selected>Selecciona un Rol</option>
+                    <option value="barra">Barra</option>
+                    <option value="mesero">Mesero</option>
+                    <option value="seguridad">Seguridad</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+        </form>
+
+        <div class="auth-footer">
+            ¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a>
+        </div>
+    </div>
+
+    <script src="./frontend/js/register.js"></script>
+</body>
+</html>

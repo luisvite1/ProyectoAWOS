@@ -1,0 +1,141 @@
+body{
+background:#0f0f0f;
+color:white;
+font-family:Inter;
+margin:0;
+}
+
+/* TOPBAR */
+
+.topbar{
+background:#e63946;
+padding:20px;
+font-family:Poppins;
+text-align:center;
+font-size:22px;
+font-weight:600;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* CONTENEDOR MESAS */
+
+.mesas-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:20px;
+width:95%;
+max-width:1200px;
+margin:auto;
+margin-top:40px;
+}
+
+/* TARJETA MESA */
+
+.mesa{
+padding:35px 20px;
+border-radius:12px;
+font-size:18px;
+font-weight:600;
+cursor:pointer;
+transition:all .25s ease;
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:120px;
+box-shadow:0 8px 18px rgba(0,0,0,0.45);
+letter-spacing:.5px;
+}
+
+/* EFECTO HOVER */
+
+.mesa:hover{
+transform:translateY(-6px) scale(1.02);
+box-shadow:0 12px 25px rgba(0,0,0,0.6);
+}
+
+/* ESTADOS */
+
+.disponible{
+background:linear-gradient(135deg,#2a9d8f,#21867a);
+}
+
+.ocupada{
+background:linear-gradient(135deg,#e63946,#c72d39);
+}
+
+.reservada{
+background:linear-gradient(135deg,#f4a261,#dd8c4e);
+}
+
+/* ===================== */
+/* RESPONSIVE */
+/* ===================== */
+
+@media (max-width:768px){
+
+.mesas-container{
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:16px;
+margin-top:30px;
+}
+
+.mesa{
+font-size:16px;
+padding:28px 15px;
+min-height:100px;
+}
+
+}
+
+@media (max-width:480px){
+
+.topbar{
+font-size:20px;
+padding:16px;
+}
+
+.mesas-container{
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+width:95%;
+}
+
+.mesa{
+font-size:15px;
+padding:25px 10px;
+min-height:90px;
+}
+
+}
+
+@media (max-width:375px){
+
+.mesas-container{
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+.mesa{
+font-size:14px;
+padding:22px 10px;
+min-height:80px;
+border-radius:10px;
+}
+
+}
+
+@media (max-width:320px){
+
+.topbar{
+font-size:18px;
+padding:14px;
+}
+
+.mesa{
+font-size:13px;
+padding:18px 8px;
+min-height:70px;
+border-radius:8px;
+}
+
+}
