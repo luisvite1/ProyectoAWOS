@@ -15,7 +15,7 @@
         <div class="comandero-header">
             <div class="comandero-header-content">
                 <h1>Comandero</h1>
-                <p>Panel de trabajo - SOFTINVENT</p>
+                <p>Panel de trabajo -- Los Litros</p>
             </div>
             <div class="menu-icon" id="menuToggle">
                 <i class="fas fa-bars"></i>
@@ -29,46 +29,102 @@
 
         <!-- Contenido principal -->
         <div class="comandero-main">
-            <!-- Sección de bienvenida -->
-            <div class="welcome-section">
-                <h2>Hola 👋</h2>
-                <p>Bienvenido al sistema de comandero de SOFTINVENT. Aquí puedes visualizar y gestionar las órdenes del bar.</p>
-                
-                <!-- Información del usuario -->
-                <div class="user-info">
-                    <div class="user-info-item">
-                        <span class="user-info-label">USUARIO</span>
-                        <span class="user-info-value" id="displayUsername">--</span>
-                    </div>
-                    <div class="user-info-item">
-                        <span class="user-info-label">ROL</span>
-                        <span class="user-info-value" id="displayRol">--</span>
-                    </div>
-                    <div class="user-info-item">
-                        <span class="user-info-label">ESTADO</span>
-                        <span class="user-info-value status-connected">CONECTADO</span>
-                    </div>
-                </div>
-            </div>
+            <div class="comandero-grid">
+                <!-- Columna izquierda: Mesa actual + Resumen de mesas -->
+                <div class="panel-mesa">
+                    <section class="card panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Mesa actual</h2>
+                                <p class="panel-subtitle">Selecciona una mesa para comenzar.</p>
+                            </div>
+                            <button class="btn btn-secondary" id="newTableBtn">+ Nueva mesa</button>
+                        </div>
 
-            <!-- Accesos rápidos -->
-            <div class="cards-grid">
-                <div class="card" onclick="navigateTo('#ordenes')">
-                    <div class="card-icon"><i class="fas fa-list"></i></div>
-                    <h3>Órdenes activas</h3>
-                    <p>Visualiza las órdenes en proceso en el sistema.</p>
-                </div>
+                        <div class="panel-body">
+                            <label class="input-label" for="tableSelect">Selecciona una mesa</label>
+                            <select id="tableSelect" aria-label="Selecciona una mesa">
+                                <option value="">-- Elige una mesa --</option>
+                            </select>
+                            <p class="panel-note">Selecciona una mesa para empezar a tomar el pedido.</p>
+                        </div>
+                    </section>
 
-                <div class="card" onclick="navigateTo('#historial')">
-                    <div class="card-icon"><i class="fas fa-history"></i></div>
-                    <h3>Historial</h3>
-                    <p>Consulta el registro de órdenes completadas.</p>
+                    <section class="card panel-card">
+                        <div class="panel-header">
+                            <h2>Resumen de mesas</h2>
+                        </div>
+                        <div class="panel-body">
+                            <p class="panel-note">Lo que lleva cada mesa en esta sesión.</p>
+                            <div class="tables-summary" id="tablesSummary">
+                                <!-- Aquí se mostrará el resumen de las mesas -->
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="card" onclick="navigateTo('#mesas')">
-                    <div class="card-icon"><i class="fas fa-table"></i></div>
-                    <h3>Mesas</h3>
-                    <p>Visualiza el estado de las mesas el bar.</p>
+                <!-- Columna central: Productos -->
+                <div class="panel-productos">
+                    <section class="card panel-card panel-large">
+                        <div class="panel-header">
+                            <h2>Productos</h2>
+                            <div class="search-wrapper">
+                                <input type="text" id="productSearch" placeholder="Buscar producto..." autocomplete="off" />
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="products-grid" id="productsGrid">
+                                <!-- Ejemplo de estructura de producto -->
+                                <div class="product-card">
+                                    <div class="product-title">Nombre del producto</div>
+                                    <div class="product-meta">
+                                        <span class="product-price">$0.00</span>
+                                        <button class="btn btn-secondary" disabled>Añadir</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-title">Nombre del producto</div>
+                                    <div class="product-meta">
+                                        <span class="product-price">$0.00</span>
+                                        <button class="btn btn-secondary" disabled>Añadir</button>
+                                    </div>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-title">Nombre del producto</div>
+                                    <div class="product-meta">
+                                        <span class="product-price">$0.00</span>
+                                        <button class="btn btn-secondary" disabled>Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Columna derecha: Pedido de la mesa -->
+                <div class="panel-pedido">
+                    <section class="card panel-card">
+                        <div class="panel-header">
+                            <h2>Pedido de Mesa</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div class="order-list" id="orderList">
+                                <p class="empty-state">Aún no hay productos agregados.</p>
+                            </div>
+
+                            <div class="order-summary">
+                                <span>Total:</span>
+                                <span class="total-amount" id="orderTotal">$0.00</span>
+                            </div>
+
+                            <div class="order-actions">
+                                <button class="btn btn-secondary" id="clearOrderBtn">Limpiar pedido</button>
+                                <button class="btn btn-primary" id="sendOrderBtn">Enviar pedido</button>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
