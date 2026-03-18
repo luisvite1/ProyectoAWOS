@@ -8,6 +8,9 @@ async function cargarRoles() {
             // limpiar y volver a crear opciones
             select.innerHTML = '<option value="" disabled selected>Selecciona un Rol</option>';
             datos.roles.forEach(r => {
+                // Ocultar el rol de administrador en el registro público
+                if (r.nombre.toLowerCase() === 'administrador') return;
+
                 const opt = document.createElement('option');
                 opt.value = r.nombre;
                 opt.textContent = r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1);

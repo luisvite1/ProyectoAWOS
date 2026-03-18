@@ -67,7 +67,7 @@ $conexion->close();
                     <p>Consulta tu información, rol y estado en el sistema.</p>
                 </div>
 
-                <div class="card" onclick="window.location.href='admin_usuarios.html'">
+                <div class="card" onclick="window.location.href='admin_usuarios.php'">
                     <div class="card-icon"><i class="fas fa-users"></i></div>
                     <h3>Administrar usuarios</h3>
                     <p>Revisa, edita o elimina cuentas registradas.</p>
