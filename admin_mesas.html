@@ -10,6 +10,126 @@
 <link rel="stylesheet" href="frontend/css/admin_mesas.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+.mesas-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.mesa {
+    padding: 20px;
+    border-radius: 16px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+
+.mesa:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+.mesa h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.mesa .info {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.mesa .total {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.disponible {
+    background: #10b981;
+}
+
+.ocupada {
+    background: #ef4444;
+}
+
+.reservada {
+    background: #f59e0b;
+}
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #1f1f1f;
+    padding: 20px;
+    border-radius: 16px;
+    width: 320px;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.detalle-lista {
+    margin-top: 15px;
+    list-style: none;
+    padding: 0;
+}
+
+.detalle-lista li {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.modal-footer {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.btn-cerrar {
+    background: #ef4444;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cerrar:hover {
+    background: #dc2626;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9);}
+    to { opacity: 1; transform: scale(1);}
+}
+</style>
+
 </head>
 
 <body>
@@ -19,14 +139,104 @@
     <h1>Control de mesas</h1>
 </header>
 
-<div class="mesas-container">
+<div id="contenedorMesas" class="mesas-container"></div>
 
-<div class="mesa disponible">Mesa 1</div>
-<div class="mesa ocupada">Mesa 2</div>
-<div class="mesa disponible">Mesa 3</div>
-<div class="mesa reservada">Mesa 4</div>
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-content">
 
+        <div class="modal-header">
+            <h3>🧾 Pedido</h3>
+            <button onclick="cerrarModal()" class="close-btn">✕</button>
+        </div>
+
+        <ul id="listaDetalle" class="detalle-lista"></ul>
+
+        <div class="modal-footer">
+            <button onclick="cerrarModal()" class="btn-cerrar">
+                Cerrar
+            </button>
+        </div>
+
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', cargarMesas);
+
+function cargarMesas() {
+    fetch('backend/admin_obtener_mesas.php')
+    .then(res => res.json())
+    .then(data => {
+
+        const contenedor = document.getElementById('contenedorMesas');
+        contenedor.innerHTML = '';
+
+        data.mesas.forEach(mesa => {
+
+            const card = document.createElement('div');
+
+            // clases dinámicas
+            let clase = 'mesa disponible';
+            if (mesa.estado === 'ocupada') clase = 'mesa ocupada';
+
+            card.className = clase;
+
+           card.innerHTML = `
+    <h3>${mesa.nombre}</h3>
+
+    <div class="info">
+        👤 ${mesa.mesero ?? 'Sin asignar'}
+    </div>
+
+    <div class="total">
+        💰 $${parseFloat(mesa.total).toFixed(2)}
+    </div>
+`;
+
+            card.addEventListener('click', () => {
+                verDetalle(mesa.pedido_id);
+            });
+
+            contenedor.appendChild(card);
+        });
+    });
+}
+
+// VER DETALLE
+function verDetalle(pedido_id) {
+
+    if (!pedido_id) {
+        alert('Mesa sin pedido');
+        return;
+    }
+
+    fetch('backend/admin_detalle_pedido.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ pedido_id })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const lista = document.getElementById('listaDetalle');
+        lista.innerHTML = '';
+
+        data.items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.nombre} x${item.cantidad} - $${item.precio}`;
+            lista.appendChild(li);
+        });
+
+        document.getElementById('modal').style.display = 'block';
+    });
+}
+
+// CERRAR MODAL
+function cerrarModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+</script>
 
 </body>
 </html>

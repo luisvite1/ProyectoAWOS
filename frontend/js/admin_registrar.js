@@ -37,7 +37,7 @@ async function enviarFormularioAdmin(e) {
         if (datos.success) {
             alert('Usuario creado con éxito');
             // después de crear, volver a la lista o limpiar el formulario
-            window.location.href = 'admin_usuarios.html';
+            window.location.href = 'admin_usuarios.php';
         } else {
             alert(datos.message);
         }

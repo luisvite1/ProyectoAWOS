@@ -38,14 +38,14 @@
                                 <h2>Mesa actual</h2>
                                 <p class="panel-subtitle">Selecciona una mesa para comenzar.</p>
                             </div>
-                            <button class="btn btn-secondary" id="newTableBtn">+ Nueva mesa</button>
+                            <button class="btn btn-secondary" id="newTableBtn"  onclick="window.location.href='crear_mesa.html'">+ Nueva mesa</button>
                         </div>
 
                         <div class="panel-body">
                             <label class="input-label" for="tableSelect">Selecciona una mesa</label>
-                            <select id="tableSelect" aria-label="Selecciona una mesa">
-                                <option value="">-- Elige una mesa --</option>
-                            </select>
+                           <select id="selectMesa">
+                         <option value="">-- Elige una mesa --</option>
+                        </select>
                             <p class="panel-note">Selecciona una mesa para empezar a tomar el pedido.</p>
                         </div>
                     </section>
@@ -158,6 +158,30 @@
             console.log('Navegando a:', section);
             alert('Funcionalidad próximamente disponible: ' + section);
         }
+
     </script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    cargarMesas();
+});
+
+function cargarMesas() {
+    fetch('backend/obtener_mesas.php')
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            const select = document.getElementById('selectMesa');
+
+            data.mesas.forEach(mesa => {
+                const option = document.createElement('option');
+                option.value = mesa.id;
+                option.textContent = mesa.nombre;
+                select.appendChild(option);
+            });
+        }
+    });
+}
+</script>
 </body>
 </html>

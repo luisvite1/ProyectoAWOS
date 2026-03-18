@@ -25,12 +25,12 @@ $result_activos = $conexion->query($sql_activos);
 $activos = $result_activos ? $result_activos->fetch_assoc()['total'] : 0;
 
 // Obtener mesas registradas
-/*$mesas = 0;
+$mesas = 0;
 $sql_mesas = "SELECT COUNT(*) as total FROM mesas";
 $result_mesas = $conexion->query($sql_mesas);
 if ($result_mesas) {
     $mesas = $result_mesas->fetch_assoc()['total'];
-}*/
+}
 
 $conexion->close();
 ?>
@@ -96,11 +96,11 @@ $conexion->close();
                         <p class="summary-card-status">Actualizado</p>
                     </div>
 
-                    <!-- <div class="summary-card">
+                     <div class="summary-card">
                         <div class="summary-card-number" id="mesas-registradas"><?php echo $mesas; ?></div>
                         <p class="summary-card-label">Mesas registradas</p>
                         <p class="summary-card-status">Actualizado</p>
-                    </div> -->
+                    </div> 
                 </div>
             </div>
         </div>

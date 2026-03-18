@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Nueva mesa</title>
+
+<link rel="stylesheet" href="frontend/css/global.css">
+
+<style>
+body {
+    background: #0f0f0f;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* tarjeta */
+.card {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 350px;
+    position: relative;
+}
+
+/* flecha regresar */
+.back {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #aaa;
+}
+
+.back:hover {
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* inputs */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    border: none;
+    background: #2a2a2a;
+    color: white;
+}
+
+/* botón */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- 🔙 REGRESAR -->
+    <div class="back" onclick="window.location.href='comandero.html'">
+        ←
+    </div>
+
+    <h2>Nueva mesa</h2>
+
+    <!-- 👇 AHORA ES TEXTO -->
+    <input type="text" id="nombreMesa" placeholder="Ej: Mesa 1, Terraza, VIP">
+
+    <!-- 👇 OPCIONAL -->
+    <select id="estadoMesa">
+        <option value="ocupada">Ocupada</option>
+        <option value="libre">Libre</option>
+    </select>
+
+    <button onclick="crearMesa()">Crear mesa</button>
+
+</div>
+
+<script>
+function crearMesa() {
+    const nombre = document.getElementById('nombreMesa').value;
+    const estado = document.getElementById('estadoMesa').value;
+
+    if (!nombre) {
+        alert('Escribe un nombre de mesa');
+        return;
+    }
+
+    fetch('backend/crear_mesa.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ nombre, estado })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Mesa creada');
+            window.location.href = 'comandero.html';
+        } else {
+            alert(data.message);
+        }
+    });
+}
+</script>
+
+</body>
+</html>
