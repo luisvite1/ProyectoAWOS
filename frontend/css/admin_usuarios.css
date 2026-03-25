@@ -1,247 +1,224 @@
-body{
-background:#0f0f0f;
-color:white;
-font-family:Inter;
+body {
+    background: #0f0f0f;
+    color: white;
+    font-family: Inter, sans-serif;
+    margin: 0;
 }
 
-.topbar{
-background:#e63946;
-padding:20px;
-font-family:Poppins;
-text-align: center;
+.topbar {
+    background: #e63946;
+    padding: 18px 20px;
+    font-family: Poppins, sans-serif;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
-.container{
-width:95%;
-max-width: 1200px;
-margin:auto;
-margin-top:30px;
+.topbar h1 {
+    margin: 0;
+    font-size: 1.2rem;
 }
 
-.acciones{
-display:flex;
-justify-content:space-between;
-align-items: center;
-margin-bottom:20px;
-gap: 10px;
+.back-btn {
+    position: absolute;
+    left: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    opacity: 0.85;
+}
+.back-btn:hover { opacity: 1; }
+
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto;
 }
 
-.btn-primary{
-background:#e63946;
-border:none;
-padding:12px 24px;
-color:white;
-border-radius:6px;
-cursor:pointer;
-font-size: 16px;
-transition: background 0.3s;
+/* ACCIONES */
+.acciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
 }
 
-.btn-primary:hover{
-background:#d32f3f;
+.btn.btn-primary {
+    background: #e63946;
+    border: none;
+    padding: 12px 22px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn.btn-primary:hover { background: #d32f3f; }
+
+#buscador {
+    padding: 11px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #1a1a1a;
+    color: white;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
+}
+#buscador:focus {
+    outline: none;
+    border-color: #e63946;
 }
 
-input{
-padding:12px;
-border-radius:6px;
-border:none;
-width: 100%;
-max-width: 300px;
-font-size: 16px;
-}
-
-.tabla{
-width:100%;
-border-collapse:collapse;
-background:#1a1a1a;
-border-radius:8px;
-overflow:hidden;
-box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+/* TABLA DESKTOP */
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
 }
 
 .tabla th,
-.tabla td{
-padding:16px;
-border-bottom:1px solid #333;
-text-align: left;
+.tabla td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #2a2a2a;
+    text-align: left;
+    font-size: 0.9rem;
 }
 
-.tabla th{
-background:#e63946;
-color: white;
-font-weight: 600;
+.tabla th {
+    background: #e63946;
+    color: white;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-.tabla tbody tr:hover{
-background:#2a2a2a;
-}
+.tabla tbody tr:hover { background: #222; }
+.tabla tbody tr:last-child td { border-bottom: none; }
 
-.activo{
-    color:#3bd671;
-    font-weight: bold;
+/* BADGES */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
 }
+.status-active  { background: rgba(59,214,113,0.15); color: #3bd671; }
+.status-inactive{ background: rgba(255,107,107,0.15); color: #ff6b6b; }
 
-.inactivo{
-    color:#ff6b6b;
-    font-weight: bold;
+/* BOTONES ACCIÓN */
+.actions { display: flex; gap: 8px; }
+
+.btn-icon {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: filter 0.2s;
+    text-decoration: none;
 }
+.btn-icon:hover { filter: brightness(1.2); }
+.btn-edit   { background: #2563eb; color: white; }
+.btn-delete { background: #e63946; color: white; }
 
-.editar{
-background:#457b9d;
-border:none;
-padding:8px 16px;
-color:white;
-border-radius:4px;
-cursor:pointer;
-font-size: 14px;
-transition: background 0.3s;
-}
+/* ── MOBILE: tabla → cards ── */
+@media (max-width: 640px) {
 
-.editar:hover{
-background:#5a8fb8;
-}
-
-.eliminar{
-background:#e63946;
-border:none;
-padding:8px 16px;
-color:white;
-border-radius:4px;
-cursor:pointer;
-font-size: 14px;
-transition: background 0.3s;
-}
-
-.eliminar:hover{
-background:#d32f3f;
-}
-
-/* Responsiveness */
-@media (max-width: 768px) {
-    .topbar {
-        padding: 15px;
-    }
-    
-    .container {
-        width: 98%;
-        margin-top: 20px;
-    }
-    
     .acciones {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
     }
-    
-    input {
-        max-width: none;
-        width: 100%;
-    }
-    
-    .btn-primary {
-        width: 100%;
-        padding: 14px;
-    }
-    
-    .tabla {
-        overflow-x: auto;
-        display: block;
-        white-space: nowrap;
-        font-size: 14px;
-    }
-    
-    .tabla th,
-    .tabla td {
-        padding: 12px 8px;
-        min-width: 100px;
-    }
-    
-    .editar, .eliminar {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-}
 
-@media (max-width: 375px) {
-    .topbar {
-        padding: 10px;
-        font-size: 18px;
-    }
-    
-    .container {
-        width: 100%;
-        padding: 0 5px;
-        margin-top: 15px;
-    }
-    
-    .acciones {
-        margin-bottom: 15px;
-    }
-    
-    .btn-primary {
-        padding: 12px;
-        font-size: 14px;
-    }
-    
-    input {
-        padding: 10px;
-        font-size: 14px;
-    }
-    
-    .tabla {
-        font-size: 12px;
-        border-radius: 4px;
-    }
-    
-    .tabla th,
-    .tabla td {
-        padding: 8px 6px;
-        min-width: 80px;
-    }
-    
-    .editar, .eliminar {
-        padding: 4px 8px;
-        font-size: 11px;
-    }
-}
+    #buscador { max-width: none; }
 
-@media (max-width: 320px) {
-    .topbar {
-        padding: 8px;
-        font-size: 16px;
+    /* ocultar thead */
+    .tabla thead { display: none; }
+
+    /* tabla y tbody se vuelven block */
+    .tabla,
+    .tabla tbody { display: block; background: transparent; box-shadow: none; }
+
+    /* cada fila = card */
+    .tabla tbody tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        background: #1a1a1a;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        border: 1px solid #2a2a2a;
+        gap: 6px;
+        position: relative;
     }
-    
-    .container {
-        padding: 0 3px;
-        margin-top: 10px;
-    }
-    
-    .acciones {
-        gap: 10px;
-    }
-    
-    .btn-primary {
-        padding: 10px;
-        font-size: 13px;
-    }
-    
-    input {
-        padding: 8px;
-        font-size: 13px;
-    }
-    
-    .tabla {
-        font-size: 11px;
-    }
-    
-    .tabla th,
+    .tabla tbody tr:hover { background: #222; }
+
+    /* cada td con su etiqueta via data-label */
     .tabla td {
-        padding: 6px 4px;
-        min-width: 70px;
+        display: flex;
+        flex-direction: column;
+        border: none;
+        padding: 2px 0;
+        font-size: 0.88rem;
     }
-    
-    .editar, .eliminar {
-        padding: 3px 6px;
-        font-size: 10px;
+
+    /* ID pequeño arriba izquierda */
+    .tabla td:nth-child(1) {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.4);
+        width: 100%;
+    }
+
+    /* Nombre grande */
+    .tabla td:nth-child(2) {
+        font-size: 1rem;
+        font-weight: 700;
+        width: 60%;
+    }
+
+    /* Rol */
+    .tabla td:nth-child(3) {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.6);
+        width: 60%;
+    }
+
+    /* Badge estado */
+    .tabla td:nth-child(4) {
+        width: 35%;
+        align-items: flex-end;
+        position: absolute;
+        right: 16px;
+        top: 16px;
+    }
+
+    /* Acciones abajo a la derecha */
+    .tabla td:nth-child(5) {
+        width: 100%;
+        justify-content: flex-end;
+        flex-direction: row;
+        padding-top: 8px;
+        border-top: 1px solid #2a2a2a;
+        margin-top: 4px;
     }
 }

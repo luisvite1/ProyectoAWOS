@@ -31,7 +31,10 @@ $result_mesas = $conexion->query($sql_mesas);
 if ($result_mesas) {
     $mesas = $result_mesas->fetch_assoc()['total'];
 }
-
+// Obtener total de productos
+$sql_productos = "SELECT COUNT(*) as total FROM productos WHERE stock > 0";
+$result_productos = $conexion->query($sql_productos);
+$productos_activos = $result_productos ? $result_productos->fetch_assoc()['total'] : 0;
 $conexion->close();
 ?>
     <div class="admin-container">
@@ -84,6 +87,11 @@ $conexion->close();
                     <h3>Control de mesas</h3>
                     <p>Visualiza el estado general de las mesas registradas.</p>
                 </div>
+                <div class="card" onclick="window.location.href='admin_productos.php'">
+    <div class="card-icon"><i class="fas fa-box-open"></i></div>
+    <h3>Gestión de productos</h3>
+    <p>Agrega, edita, elimina productos y controla el stock manualmente.</p>
+</div>
             </div>
 
             <!-- Resumen rápido -->
@@ -101,6 +109,11 @@ $conexion->close();
                         <p class="summary-card-label">Mesas registradas</p>
                         <p class="summary-card-status">Actualizado</p>
                     </div> 
+                    <div class="summary-card">
+    <div class="summary-card-number"><?php echo $productos_activos; ?></div>
+    <p class="summary-card-label">Productos activos</p>
+    <p class="summary-card-status">Con stock disponible</p>
+</div>
                 </div>
             </div>
         </div>

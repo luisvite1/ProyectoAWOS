@@ -7,30 +7,29 @@
     <link rel="stylesheet" href="./frontend/css/global.css">
     <link rel="stylesheet" href="./frontend/css/comandero.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 <body>
     <div class="comandero-container">
-        <!-- Encabezado -->
         <div class="comandero-header">
             <div class="comandero-header-content">
                 <h1>Comandero</h1>
                 <p>Panel de trabajo -- Los Litros</p>
             </div>
+
             <div class="menu-icon" id="menuToggle">
                 <i class="fas fa-bars"></i>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="#perfil"><i class="fas fa-user"></i>Perfil</a>
                     <a href="#terminos"><i class="fas fa-file-contract"></i>Términos y condiciones</a>
-                    <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</button>
+                    <button id="logoutBtn" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i>Cerrar sesión
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Contenido principal -->
         <div class="comandero-main">
             <div class="comandero-grid">
-                <!-- Columna izquierda: Mesa actual + Resumen de mesas -->
                 <div class="panel-mesa">
                     <section class="card panel-card">
                         <div class="panel-header">
@@ -38,14 +37,16 @@
                                 <h2>Mesa actual</h2>
                                 <p class="panel-subtitle">Selecciona una mesa para comenzar.</p>
                             </div>
-                            <button class="btn btn-secondary" id="newTableBtn"  onclick="window.location.href='crear_mesa.html'">+ Nueva mesa</button>
+                            <button class="btn btn-secondary" id="newTableBtn" onclick="window.location.href='crear_mesa.html'">
+                                + Nueva mesa
+                            </button>
                         </div>
 
                         <div class="panel-body">
-                            <label class="input-label" for="tableSelect">Selecciona una mesa</label>
-                           <select id="selectMesa">
-                         <option value="">-- Elige una mesa --</option>
-                        </select>
+                            <label class="input-label" for="selectMesa">Selecciona una mesa</label>
+                            <select id="selectMesa">
+                                <option value="">-- Elige una mesa --</option>
+                            </select>
                             <p class="panel-note">Selecciona una mesa para empezar a tomar el pedido.</p>
                         </div>
                     </section>
@@ -57,13 +58,12 @@
                         <div class="panel-body">
                             <p class="panel-note">Lo que lleva cada mesa en esta sesión.</p>
                             <div class="tables-summary" id="tablesSummary">
-                                <!-- Aquí se mostrará el resumen de las mesas -->
+                                <p class="empty-state">Cargando resumen...</p>
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <!-- Columna central: Productos -->
                 <div class="panel-productos">
                     <section class="card panel-card panel-large">
                         <div class="panel-header">
@@ -76,34 +76,12 @@
 
                         <div class="panel-body">
                             <div class="products-grid" id="productsGrid">
-                                <!-- Ejemplo de estructura de producto -->
-                                <div class="product-card">
-                                    <div class="product-title">Nombre del producto</div>
-                                    <div class="product-meta">
-                                        <span class="product-price">$0.00</span>
-                                        <button class="btn btn-secondary" disabled>Añadir</button>
-                                    </div>
-                                </div>
-                                <div class="product-card">
-                                    <div class="product-title">Nombre del producto</div>
-                                    <div class="product-meta">
-                                        <span class="product-price">$0.00</span>
-                                        <button class="btn btn-secondary" disabled>Añadir</button>
-                                    </div>
-                                </div>
-                                <div class="product-card">
-                                    <div class="product-title">Nombre del producto</div>
-                                    <div class="product-meta">
-                                        <span class="product-price">$0.00</span>
-                                        <button class="btn btn-secondary" disabled>Añadir</button>
-                                    </div>
-                                </div>
+                                <p class="empty-state">Cargando productos...</p>
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <!-- Columna derecha: Pedido de la mesa -->
                 <div class="panel-pedido">
                     <section class="card panel-card">
                         <div class="panel-header">
@@ -131,55 +109,298 @@
     </div>
 
     <script>
-       
+    const selectMesa = document.getElementById('selectMesa');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const productSearch = document.getElementById('productSearch');
+    const productsGrid = document.getElementById('productsGrid');
+    const orderList = document.getElementById('orderList');
+    const orderTotal = document.getElementById('orderTotal');
+    const tablesSummary = document.getElementById('tablesSummary');
 
-        // Toggle del menú
-        document.getElementById('menuToggle').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('dropdownMenu').classList.toggle('active');
-        });
+    // 🧠 Pedido local (solo esta sesión)
+    let pedidoLocal = []; // [{producto_id, nombre, precio, cantidad}]
 
-        // Cerrar menú al hacer clic fuera
-        document.addEventListener('click', function() {
-            document.getElementById('dropdownMenu').classList.remove('active');
-        });
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+    });
 
-        // Cerrar sesión
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                // Limpiar localStorage y redirigir al login
-                localStorage.clear();
-                window.location.href = 'index.html';
+    document.addEventListener('click', function() {
+        dropdownMenu.classList.remove('active');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarMesas();
+        cargarProductos();
+
+        selectMesa.addEventListener('change', function() {
+            const mesa_id = this.value;
+            pedidoLocal = [];
+            renderizarPedidoLocal();
+
+            if (mesa_id) {
+                cargarResumenMesa(mesa_id);
+            } else {
+                tablesSummary.innerHTML = '<p class="empty-state">Selecciona una mesa para ver su resumen.</p>';
             }
         });
 
-        // Función para navegar a secciones
-        function navigateTo(section) {
-            console.log('Navegando a:', section);
-            alert('Funcionalidad próximamente disponible: ' + section);
+        productSearch.addEventListener('input', filtrarProductos);
+        document.getElementById('sendOrderBtn').addEventListener('click', enviarPedidoActual);
+        document.getElementById('clearOrderBtn').addEventListener('click', limpiarPedidoLocal);
+    });
+
+    function cargarMesas() {
+        fetch('backend/obtener_mesas.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) return;
+                selectMesa.innerHTML = '<option value="">-- Elige una mesa --</option>';
+                data.mesas.forEach(mesa => {
+                    const option = document.createElement('option');
+                    option.value = mesa.id;
+                    option.textContent = mesa.nombre;
+                    selectMesa.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error cargando mesas:', err));
+    }
+
+    function cargarProductos() {
+    fetch('backend/obtener_productos.php')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success || !data.productos || data.productos.length === 0) {
+                productsGrid.innerHTML = '<p class="empty-state">No hay productos registrados.</p>';
+                return;
+            }
+
+            // Agrupar por categoría
+            const categorias = {};
+            data.productos.forEach(prod => {
+                const cat = prod.categoria_nombre || 'Sin categoría';
+                if (!categorias[cat]) categorias[cat] = [];
+                categorias[cat].push(prod);
+            });
+
+            // Construir botones de categoría
+            const panelHeader = document.querySelector('.panel-productos .panel-header');
+            let filtrosEl = document.getElementById('categorisFiltros');
+            if (!filtrosEl) {
+                filtrosEl = document.createElement('div');
+                filtrosEl.id = 'categorisFiltros';
+                filtrosEl.className = 'categorias-filtros';
+                panelHeader.insertAdjacentElement('afterend', filtrosEl);
+            }
+
+            filtrosEl.innerHTML = '';
+
+            const btnTodos = document.createElement('button');
+            btnTodos.className = 'btn-categoria active';
+            btnTodos.textContent = 'Todos';
+            btnTodos.onclick = () => filtrarPorCategoria(null, btnTodos);
+            filtrosEl.appendChild(btnTodos);
+
+            Object.keys(categorias).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-categoria';
+                btn.textContent = cat;
+                btn.onclick = () => filtrarPorCategoria(cat, btn);
+                filtrosEl.appendChild(btn);
+            });
+
+            // Renderizar productos con data-categoria
+            productsGrid.innerHTML = '';
+            data.productos.forEach(prod => {
+                const id = prod.id_producto;
+                const nombre = prod.nombre ?? 'Sin nombre';
+                const precio = Number(prod.precio ?? 0);
+                const cat = prod.categoria_nombre || 'Sin categoría';
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.dataset.name = nombre.toLowerCase();
+                card.dataset.categoria = cat;
+
+                card.innerHTML = `
+                    <div class="product-title">${nombre}</div>
+                    <div class="product-meta">
+                        <span class="product-price">$${precio.toFixed(2)}</span>
+                        <button class="btn btn-secondary" onclick="agregarProducto(${id}, '${nombre.replace(/'/g, "\\'")}', ${precio})">
+                            Añadir
+                        </button>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error('Error cargando productos:', err);
+            productsGrid.innerHTML = '<p class="empty-state">Error al cargar productos.</p>';
+        });
+}
+
+function filtrarPorCategoria(cat, btnActivo) {
+    // Actualizar botón activo
+    document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('active'));
+    btnActivo.classList.add('active');
+
+    // Filtrar cards
+    document.querySelectorAll('.product-card').forEach(card => {
+        const coincideCategoria = !cat || card.dataset.categoria === cat;
+        const coincideBusqueda = card.dataset.name.includes(productSearch.value.toLowerCase().trim());
+        card.style.display = coincideCategoria && coincideBusqueda ? '' : 'none';
+    });
+}
+
+    function filtrarProductos() {
+    const term = productSearch.value.toLowerCase().trim();
+    const catActiva = document.querySelector('.btn-categoria.active')?.textContent;
+    
+    document.querySelectorAll('.product-card').forEach(card => {
+        const coincideCategoria = !catActiva || catActiva === 'Todos' || card.dataset.categoria === catActiva;
+        const coincideBusqueda = card.dataset.name.includes(term);
+        card.style.display = coincideCategoria && coincideBusqueda ? '' : 'none';
+    });
+}
+
+    function agregarProducto(producto_id, nombre, precio) {
+    const mesa_id = selectMesa.value;
+
+    if (!mesa_id) {
+        alert('Selecciona una mesa primero');
+        return;
+    }
+
+    // Solo acumula local, no toca BD
+    const existente = pedidoLocal.find(p => p.producto_id === producto_id);
+    if (existente) {
+        existente.cantidad++;
+    } else {
+        pedidoLocal.push({ producto_id, nombre, precio, cantidad: 1 });
+    }
+
+    renderizarPedidoLocal();
+}
+
+    function renderizarPedidoLocal() {
+        orderList.innerHTML = '';
+
+        if (pedidoLocal.length === 0) {
+            orderList.innerHTML = '<p class="empty-state">Aún no hay productos agregados.</p>';
+            orderTotal.textContent = '$0.00';
+            return;
         }
 
-    </script>
+        let total = 0;
 
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-    cargarMesas();
-});
+        pedidoLocal.forEach(item => {
+            const subtotal = item.precio * item.cantidad;
+            total += subtotal;
 
-function cargarMesas() {
-    fetch('backend/obtener_mesas.php')
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <span>${item.nombre} x${item.cantidad}</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            `;
+            orderList.appendChild(div);
+        });
+
+        orderTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+    // Carga lo que ya tiene la mesa en BD → izquierda
+    function cargarResumenMesa(mesa_id) {
+        tablesSummary.innerHTML = '<p class="empty-state">Cargando...</p>';
+
+        fetch(`backend/obtener_pedido.php?mesa_id=${mesa_id}`)
+            .then(res => res.json())
+            .then(data => {
+                tablesSummary.innerHTML = '';
+
+                if (!data.success || !data.items || data.items.length === 0) {
+                    tablesSummary.innerHTML = '<p class="empty-state">Esta mesa no tiene productos aún.</p>';
+                    return;
+                }
+
+                data.items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    div.innerHTML = `
+                        <span>${item.nombre} x${item.cantidad}</span>
+                        <span>$${Number(item.subtotal).toFixed(2)}</span>
+                    `;
+                    tablesSummary.appendChild(div);
+                });
+
+                const totalDiv = document.createElement('div');
+                totalDiv.className = 'order-summary';
+                totalDiv.style.marginTop = '8px';
+                totalDiv.innerHTML = `
+                    <span>Total en mesa:</span>
+                    <span>$${Number(data.total ?? 0).toFixed(2)}</span>
+                `;
+                tablesSummary.appendChild(totalDiv);
+            })
+            .catch(err => {
+                console.error('Error cargando resumen:', err);
+                tablesSummary.innerHTML = '<p class="empty-state">Error al cargar el resumen.</p>';
+            });
+    }
+
+    // Limpia solo la vista derecha (no toca BD)
+    function limpiarPedidoLocal() {
+        if (pedidoLocal.length === 0) return;
+        if (!confirm('¿Limpiar los productos de esta sesión?')) return;
+        pedidoLocal = [];
+        renderizarPedidoLocal();
+    }
+
+    function enviarPedidoActual() {
+    const mesa_id = selectMesa.value;
+
+    if (!mesa_id) {
+        alert('Selecciona una mesa');
+        return;
+    }
+
+    if (pedidoLocal.length === 0) {
+        alert('No hay productos en el pedido actual');
+        return;
+    }
+
+    const productos = pedidoLocal.map(p => ({
+        producto_id: p.producto_id,
+        cantidad: p.cantidad
+    }));
+
+    fetch('backend/enviar_pedido.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mesa_id, productos })
+    })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            const select = document.getElementById('selectMesa');
-
-            data.mesas.forEach(mesa => {
-                const option = document.createElement('option');
-                option.value = mesa.id;
-                option.textContent = mesa.nombre;
-                select.appendChild(option);
-            });
+            alert('Pedido enviado correctamente');
+            pedidoLocal = [];
+            renderizarPedidoLocal();
+            cargarResumenMesa(mesa_id); // ahora sí actualiza izquierda
+        } else {
+            alert(data.message || 'No se pudo enviar el pedido');
         }
+    })
+    .catch(err => {
+        console.error('Error enviando pedido:', err);
+        alert('Error de conexión');
     });
 }
 </script>

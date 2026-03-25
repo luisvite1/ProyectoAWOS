@@ -179,3 +179,9 @@ body{
         padding: 1rem;
     }
 }
+.card:nth-child(5) {
+    border-left-color: #43e97b;
+}
+.card:nth-child(5) .card-icon {
+    color: #43e97b;
+}

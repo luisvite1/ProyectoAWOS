@@ -28,7 +28,7 @@ async function enviarFormularioAdmin(e) {
     const rol = document.getElementById('admin-rol').value;
 
     try {
-        const respuesta = await fetch('./backend/register.php', {
+        const respuesta = await fetch('./backend/admin_register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: nombre, password, rol })

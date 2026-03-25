@@ -3,211 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Control de mesas</title>
 
 <link rel="stylesheet" href="frontend/css/global.css">
 <link rel="stylesheet" href="frontend/css/admin_mesas.css">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-.mesas-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.mesa {
-    padding: 20px;
-    border-radius: 16px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 140px;
-}
-
-.mesa:hover {
-    transform: translateY(-5px) scale(1.02);
-}
-
-.mesa h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.mesa .info {
-    font-size: 14px;
-    opacity: 0.9;
-}
-
-.mesa .total {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-.disponible {
-    background: #10b981;
-}
-
-.ocupada {
-    background: #ef4444;
-}
-
-.reservada {
-    background: #f59e0b;
-}
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: #1f1f1f;
-    padding: 20px;
-    border-radius: 16px;
-    width: 320px;
-    animation: fadeIn 0.3s ease;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.detalle-lista {
-    margin-top: 15px;
-    list-style: none;
-    padding: 0;
-}
-
-.detalle-lista li {
-    padding: 10px;
-    border-bottom: 1px solid #333;
-}
-
-.modal-footer {
-    margin-top: 15px;
-    text-align: right;
-}
-
-.btn-cerrar {
-    background: #ef4444;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.btn-cerrar:hover {
-    background: #dc2626;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9);}
-    to { opacity: 1; transform: scale(1);}
-}
-</style>
 
 </head>
 
 <body>
 
 <header class="topbar">
-    <a href="admin.php" class="back-btn">←</a>
+    <a href="admin.php" class="back-btn"><i class="fas fa-arrow-left"></i></a>
     <h1>Control de mesas</h1>
+    <button class="btn-nueva-mesa" onclick="abrirModalCrear()">
+        <i class="fas fa-plus"></i> Nueva mesa
+    </button>
 </header>
 
 <div id="contenedorMesas" class="mesas-container"></div>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-
-        <div class="modal-header">
-            <h3>🧾 Pedido</h3>
-            <button onclick="cerrarModal()" class="close-btn">✕</button>
+<!-- MODAL CREAR MESA -->
+<div class="modal-overlay" id="modalCrear">
+    <div class="modal-box">
+        <h3><i class="fas fa-chair"></i> Nueva mesa</h3>
+        <input type="text" id="inputNombreMesa" placeholder="Nombre (ej: Mesa 4, Terraza, VIP)">
+        <select id="selectMeseroCrear">
+            <option value="">-- Asignar mesero (opcional) --</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn-cancelar" onclick="cerrarModalCrear()">Cancelar</button>
+            <button class="btn-confirmar" onclick="crearMesa()">Crear mesa</button>
         </div>
+    </div>
+</div>
 
+<!-- MODAL CAMBIAR MESERO -->
+<div class="modal-overlay" id="modalMesero">
+    <div class="modal-box">
+        <h3><i class="fas fa-user"></i> Cambiar mesero</h3>
+        <select id="selectMeseroModal">
+            <option value="">-- Selecciona mesero --</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn-cancelar" onclick="cerrarModalMesero()">Cancelar</button>
+            <button class="btn-confirmar" onclick="confirmarMesero()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALLE PEDIDO -->
+<div class="modal-overlay" id="modalDetalle">
+    <div class="modal-box">
+        <h3 id="modalDetalleTitulo">Pedido</h3>
         <ul id="listaDetalle" class="detalle-lista"></ul>
-
-        <div class="modal-footer">
-            <button onclick="cerrarModal()" class="btn-cerrar">
-                Cerrar
-            </button>
+        <div class="modal-actions" style="margin-top:16px">
+            <button class="btn-cancelar" onclick="cerrarModalDetalle()">Cerrar</button>
         </div>
-
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', cargarMesas);
+let mesaIdMesero = null; // mesa activa para cambiar mesero
 
+document.addEventListener('DOMContentLoaded', () => {
+    cargarMesas();
+});
+
+// ─── CARGAR MESAS ───────────────────────────────────────
 function cargarMesas() {
     fetch('backend/admin_obtener_mesas.php')
-    .then(res => res.json())
-    .then(data => {
+        .then(res => res.json())
+        .then(data => {
+            const contenedor = document.getElementById('contenedorMesas');
+            contenedor.innerHTML = '';
 
-        const contenedor = document.getElementById('contenedorMesas');
-        contenedor.innerHTML = '';
+            if (!data.success || !data.mesas.length) {
+                contenedor.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;margin-top:60px">No hay mesas registradas.</p>';
+                return;
+            }
 
-        data.mesas.forEach(mesa => {
+            data.mesas.forEach(mesa => {
+                const ocupada = mesa.pedido_id && parseFloat(mesa.total) > 0;
+                const card = document.createElement('div');
+                card.className = `mesa ${ocupada ? 'ocupada' : 'disponible'}`;
 
-            const card = document.createElement('div');
+                card.innerHTML = `
+                    <div>
+                        <span class="mesa-badge">${ocupada ? 'Con pedido' : 'Libre'}</span>
+                        <h3 style="margin-top:8px">${mesa.nombre}</h3>
+                        <div class="mesa-mesero">
+                            <i class="fas fa-user"></i>
+                            ${mesa.mesero ?? 'Sin mesero'}
+                        </div>
+                    </div>
+                    <div class="mesa-total">$${parseFloat(mesa.total).toFixed(2)}</div>
+                    <div class="acciones-mesa" id="acciones-${mesa.id}">
+                        <button class="btn-edit" onclick="event.stopPropagation(); editarMesa(${mesa.id}, '${mesa.nombre.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-pen"></i> Editar
+                        </button>
+                        <button class="btn-mesero" onclick="event.stopPropagation(); abrirModalMesero(${mesa.id})">
+                            <i class="fas fa-user-edit"></i>
+                        </button>
+                        <button class="btn-delete" onclick="event.stopPropagation(); eliminarMesa(${mesa.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
 
-            // clases dinámicas
-            let clase = 'mesa disponible';
-            if (mesa.estado === 'ocupada') clase = 'mesa ocupada';
-
-            card.className = clase;
-
-           card.innerHTML = `
-    <h3>${mesa.nombre}</h3>
-
-    <div class="info">
-        👤 ${mesa.mesero ?? 'Sin asignar'}
-    </div>
-
-    <div class="total">
-        💰 $${parseFloat(mesa.total).toFixed(2)}
-    </div>
-`;
-
-            card.addEventListener('click', () => {
-                verDetalle(mesa.pedido_id);
+                card.addEventListener('click', () => verDetalle(mesa.pedido_id, mesa.nombre));
+                contenedor.appendChild(card);
             });
-
-            contenedor.appendChild(card);
         });
-    });
 }
 
-// VER DETALLE
-function verDetalle(pedido_id) {
+// ─── VER DETALLE ─────────────────────────────────────────
+function verDetalle(pedido_id, nombre) {
+    document.getElementById('modalDetalleTitulo').textContent = `Pedido — ${nombre}`;
+    const lista = document.getElementById('listaDetalle');
+    lista.innerHTML = '<li class="detalle-empty">Cargando...</li>';
+    document.getElementById('modalDetalle').classList.add('active');
 
     if (!pedido_id) {
-        alert('Mesa sin pedido');
+        lista.innerHTML = '<li class="detalle-empty">Esta mesa no tiene pedido activo.</li>';
         return;
     }
 
@@ -218,23 +138,129 @@ function verDetalle(pedido_id) {
     })
     .then(res => res.json())
     .then(data => {
-
-        const lista = document.getElementById('listaDetalle');
         lista.innerHTML = '';
-
+        if (!data.items || data.items.length === 0) {
+            lista.innerHTML = '<li class="detalle-empty">Sin productos.</li>';
+            return;
+        }
         data.items.forEach(item => {
             const li = document.createElement('li');
-            li.textContent = `${item.nombre} x${item.cantidad} - $${item.precio}`;
+            li.innerHTML = `<span>${item.nombre} x${item.cantidad}</span><span>$${parseFloat(item.precio).toFixed(2)}</span>`;
             lista.appendChild(li);
         });
-
-        document.getElementById('modal').style.display = 'block';
     });
 }
 
-// CERRAR MODAL
-function cerrarModal() {
-    document.getElementById('modal').style.display = 'none';
+function cerrarModalDetalle() {
+    document.getElementById('modalDetalle').classList.remove('active');
+}
+
+// ─── EDITAR NOMBRE ───────────────────────────────────────
+function editarMesa(id, nombreActual) {
+    const nuevoNombre = prompt('Nuevo nombre:', nombreActual);
+    if (!nuevoNombre || nuevoNombre === nombreActual) return;
+
+    fetch('backend/admin_editar_mesa.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id, nombre: nuevoNombre })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) cargarMesas();
+        else alert(data.message);
+    });
+}
+
+// ─── ELIMINAR ────────────────────────────────────────────
+function eliminarMesa(id) {
+    if (!confirm('⚠️ Esto eliminará la mesa y su pedido. ¿Continuar?')) return;
+
+    fetch('backend/admin_eliminar_mesa.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) cargarMesas();
+        else alert(data.message);
+    });
+}
+
+// ─── MODAL MESERO ────────────────────────────────────────
+function abrirModalMesero(mesa_id) {
+    mesaIdMesero = mesa_id;
+
+    fetch('backend/obtener_meseros.php')
+        .then(res => res.json())
+        .then(data => {
+            const sel = document.getElementById('selectMeseroModal');
+            sel.innerHTML = '<option value="">-- Selecciona mesero --</option>';
+            data.meseros.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.username}</option>`;
+            });
+            document.getElementById('modalMesero').classList.add('active');
+        });
+}
+
+function cerrarModalMesero() {
+    document.getElementById('modalMesero').classList.remove('active');
+    mesaIdMesero = null;
+}
+
+function confirmarMesero() {
+    const usuario_id = document.getElementById('selectMeseroModal').value;
+    if (!usuario_id) { alert('Selecciona un mesero'); return; }
+
+    fetch('backend/admin_cambiar_mesero.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ mesa_id: mesaIdMesero, usuario_id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) { cerrarModalMesero(); cargarMesas(); }
+        else alert(data.message);
+    });
+}
+
+// ─── MODAL CREAR MESA ────────────────────────────────────
+function abrirModalCrear() {
+    fetch('backend/obtener_meseros.php')
+        .then(res => res.json())
+        .then(data => {
+            const sel = document.getElementById('selectMeseroCrear');
+            sel.innerHTML = '<option value="">-- Asignar mesero (opcional) --</option>';
+            data.meseros.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.username}</option>`;
+            });
+        });
+
+    document.getElementById('inputNombreMesa').value = '';
+    document.getElementById('modalCrear').classList.add('active');
+}
+
+function cerrarModalCrear() {
+    document.getElementById('modalCrear').classList.remove('active');
+}
+
+function crearMesa() {
+    const nombre = document.getElementById('inputNombreMesa').value.trim();
+    const usuario_id = document.getElementById('selectMeseroCrear').value || null;
+
+    if (!nombre) { alert('Escribe un nombre para la mesa'); return; }
+
+    fetch('backend/crear_mesa.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ nombre, usuario_id })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) { cerrarModalCrear(); cargarMesas(); }
+        else alert(data.message || 'Error al crear mesa');
+    });
 }
 </script>
 

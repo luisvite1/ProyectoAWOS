@@ -35,7 +35,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const rol = document.getElementById('reg-rol').value;
     
     try {
-        const respuesta = await fetch('./backend/register.php', {
+       const respuesta = await fetch('./backend/admin_register.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

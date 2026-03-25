@@ -4,7 +4,6 @@ include 'config.php';
 
 header('Content-Type: application/json');
 
-// validar admin
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
     echo json_encode(['success' => false]);
     exit;
@@ -14,13 +13,14 @@ $sql = "
 SELECT 
     m.id,
     m.nombre,
-    m.estado,
     u.username AS mesero,
-    IFNULL(p.total, 0) AS total,
+    IFNULL(SUM(pd.cantidad * pd.precio), 0) AS total,
     p.id AS pedido_id
 FROM mesas m
 LEFT JOIN usuarios u ON m.usuario_id = u.id
-LEFT JOIN pedidos p ON m.id = p.mesa_id AND p.estado = 'abierto'
+LEFT JOIN pedidos p ON m.id = p.mesa_id
+LEFT JOIN pedido_detalle pd ON pd.pedido_id = p.id
+GROUP BY m.id, m.nombre, u.username, p.id
 ORDER BY m.id DESC
 ";
 
