@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario'])) {
 
 $usuario_id = $_SESSION['usuario']['id'];
 
-$sql = "SELECT id, nombre FROM mesas WHERE usuario_id = ? AND estado = 'ocupada' ORDER BY id DESC";
+$sql = "SELECT id, nombre FROM mesas WHERE usuario_id = ? ORDER BY nombre ASC";
 
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("i", $usuario_id);

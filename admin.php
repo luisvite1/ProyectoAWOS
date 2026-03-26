@@ -93,6 +93,11 @@ $conexion->close();
     <p>Agrega, edita, elimina productos y controla el stock manualmente.</p>
 </div>
             </div>
+            <div class="card" onclick="window.location.href='admin_reportes.php'">
+    <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+    <h3>Reportes de ventas</h3>
+    <p>Consulta el total vendido por día, productos y meseros.</p>
+</div>
 
             <!-- Resumen rápido -->
             <div class="summary-section">

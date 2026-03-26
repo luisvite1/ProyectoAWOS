@@ -7,7 +7,7 @@ const password = document.getElementById("password").value;
 
 try{
 
-const respuesta = await fetch("/Proyecto_AWOS/backend/login.php",{
+const respuesta = await fetch("/ProyectoAWOS/backend/login.php",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -19,6 +19,8 @@ password:password
 });
 
 const datos = await respuesta.json();
+/*const texto = await respuesta.text();
+console.log(texto);*/
 
 if(datos.success){
 
