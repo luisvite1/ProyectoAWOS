@@ -4,7 +4,6 @@ include 'config.php';
 
 header('Content-Type: application/json');
 
-// Solo admins pueden usar este endpoint
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
     echo json_encode(['success' => false, 'message' => 'No autorizado']);
     exit;
@@ -42,12 +41,31 @@ if ($stmt->get_result()->num_rows > 0) {
     exit;
 }
 
-// Insertar
+// Insertar en MySQL primero
 $hash = password_hash($password, PASSWORD_BCRYPT);
 $stmt = $conexion->prepare("INSERT INTO usuarios (username, password, rol_id, activo) VALUES (?, ?, ?, 1)");
 $stmt->bind_param("ssi", $username, $hash, $rol_id);
 
 if ($stmt->execute()) {
+    $nuevo_id = $conexion->insert_id;
+
+    // Sincronizar con MongoDB después de tener el mysql_id
+    $mongo_data = json_encode([
+        'username' => $username,
+        'password' => $hash,
+        'rol'      => $rol,
+        'activo'   => true,
+        'mysql_id' => $nuevo_id
+    ]);
+
+    $ch = curl_init('http://localhost:3000/usuarios');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $mongo_data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_exec($ch);
+    curl_close($ch);
+
     echo json_encode(['success' => true, 'message' => 'Usuario creado correctamente']);
 } else {
     echo json_encode(['success' => false, 'message' => $conexion->error]);

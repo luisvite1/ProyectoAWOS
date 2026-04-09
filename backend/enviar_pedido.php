@@ -13,7 +13,7 @@ $usuario_id = $_SESSION['usuario']['id'];
 $data = json_decode(file_get_contents("php://input"), true);
 
 $mesa_id  = $data['mesa_id']  ?? null;
-$productos = $data['productos'] ?? []; // [{producto_id, cantidad}]
+$productos = $data['productos'] ?? [];
 
 if (!$mesa_id || empty($productos)) {
     echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
@@ -42,7 +42,6 @@ foreach ($productos as $item) {
 
     if (!$producto_id) continue;
 
-    // Obtener precio actual
     $stmt = $conexion->prepare("SELECT precio FROM productos WHERE id_producto = ?");
     $stmt->bind_param("i", $producto_id);
     $stmt->execute();
@@ -50,7 +49,6 @@ foreach ($productos as $item) {
     if ($res->num_rows == 0) continue;
     $precio = $res->fetch_assoc()['precio'];
 
-    // Si ya existe en detalle, sumar cantidad
     $stmt = $conexion->prepare("SELECT id, cantidad FROM pedido_detalle WHERE pedido_id = ? AND producto_id = ?");
     $stmt->bind_param("ii", $pedido_id, $producto_id);
     $stmt->execute();
@@ -69,23 +67,18 @@ foreach ($productos as $item) {
     }
 }
 
-// Descontar stock por cada producto enviado
+// Descontar stock
 foreach ($productos as $item) {
     $producto_id = $item['producto_id'] ?? null;
     $cantidad    = $item['cantidad']    ?? 1;
-
     if (!$producto_id) continue;
 
-    $stmt = $conexion->prepare("
-        UPDATE productos 
-        SET stock = GREATEST(stock - ?, 0)
-        WHERE id_producto = ?
-    ");
+    $stmt = $conexion->prepare("UPDATE productos SET stock = GREATEST(stock - ?, 0) WHERE id_producto = ?");
     $stmt->bind_param("ii", $cantidad, $producto_id);
     $stmt->execute();
 }
 
-// Actualizar total del pedido
+// Actualizar total del pedido en MySQL
 $stmt = $conexion->prepare("
     UPDATE pedidos 
     SET total = (SELECT SUM(cantidad * precio) FROM pedido_detalle WHERE pedido_id = ?)
@@ -93,5 +86,44 @@ $stmt = $conexion->prepare("
 ");
 $stmt->bind_param("ii", $pedido_id, $pedido_id);
 $stmt->execute();
+
+// Obtener nombre de mesa y mesero
+$mesa_nombre = '';
+$stmt = $conexion->prepare("SELECT nombre FROM mesas WHERE id = ?");
+$stmt->bind_param("i", $mesa_id);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($row = $res->fetch_assoc()) $mesa_nombre = $row['nombre'];
+
+$mesero = $_SESSION['usuario']['username'] ?? 'desconocido';
+
+// Calcular total desde BD para MongoDB
+$total_mongo = 0;
+foreach ($productos as $item) {
+    $pid = $item['producto_id'];
+    $qty = $item['cantidad'];
+    $stmt_precio = $conexion->prepare("SELECT precio FROM productos WHERE id_producto = ?");
+    $stmt_precio->bind_param("i", $pid);
+    $stmt_precio->execute();
+    $precio_res = $stmt_precio->get_result()->fetch_assoc();
+    $total_mongo += $qty * ($precio_res['precio'] ?? 0);
+}
+
+// Registrar venta en MongoDB
+$venta_data = json_encode([
+    'mesa_id'     => $mesa_id,
+    'mesa_nombre' => $mesa_nombre,
+    'mesero'      => $mesero,
+    'productos'   => $productos,
+    'total'       => $total_mongo
+]);
+
+$ch = curl_init('http://localhost:3000/ventas');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $venta_data);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_exec($ch);
+curl_close($ch);
 
 echo json_encode(['success' => true, 'message' => 'Pedido guardado correctamente']);

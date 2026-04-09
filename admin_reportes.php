@@ -15,7 +15,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
     <title>Reportes - Los Litros</title>
     <link rel="stylesheet" href="frontend/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body { background: #0f0f0f; color: white; font-family: Inter, sans-serif; margin: 0; }
 
@@ -35,7 +34,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
 
         .container { width: 95%; max-width: 1100px; margin: 28px auto; }
 
-        /* FILTRO FECHA */
         .filtro {
             display: flex;
             align-items: center;
@@ -53,6 +51,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
             font-size: 0.9rem;
         }
         .filtro input[type="date"]:focus { outline: none; border-color: #e63946; }
+
         .btn-consultar {
             background: #e63946;
             color: white;
@@ -68,7 +67,21 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
         }
         .btn-consultar:hover { filter: brightness(1.1); }
 
-        /* TOTAL GRANDE */
+        .btn-pdf {
+            background: #1a1a1a;
+            color: #e63946;
+            border: 1px solid #e63946;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-pdf:hover { background: #e63946; color: white; }
+
         .total-card {
             background: linear-gradient(135deg, #e63946, #c72d39);
             border-radius: 14px;
@@ -81,7 +94,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
         .total-card .monto { font-size: 2.8rem; font-weight: 700; font-family: Poppins, sans-serif; }
         .total-card .fecha-label { font-size: 0.8rem; opacity: 0.7; margin-top: 6px; }
 
-        /* GRID SECCIONES */
         .grid-reportes {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -119,7 +131,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
         .reporte-item .valor { font-weight: 700; color: #e63946; }
         .reporte-item .cantidad { color: rgba(255,255,255,0.45); font-size: 0.8rem; }
 
-        /* BARRA DE PROGRESO */
         .barra-wrap { margin-top: 4px; }
         .barra {
             height: 4px;
@@ -146,20 +157,6 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
             .grid-reportes { grid-template-columns: 1fr; }
             .total-card .monto { font-size: 2rem; }
         }
-        .btn-pdf {
-    background: #1a1a1a;
-    color: #e63946;
-    border: 1px solid #e63946;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.btn-pdf:hover { background: #e63946; color: white; }
     </style>
 </head>
 <body>
@@ -172,15 +169,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
 
 <div class="container">
     <div class="filtro">
-    <label>Fecha:</label>
-    <input type="date" id="inputFecha">
-    <button class="btn-consultar" onclick="cargarReporte()">
-        <i class="fas fa-search"></i> Consultar
-    </button>
-    <button class="btn-pdf" id="btnPdf" onclick="generarPDF()">
-        <i class="fas fa-file-pdf"></i> Descargar PDF
-    </button>
-
+        <label>Fecha:</label>
+        <input type="date" id="inputFecha">
+        <button class="btn-consultar" onclick="cargarReporte()">
+            <i class="fas fa-search"></i> Consultar
+        </button>
+        <button class="btn-pdf" id="btnPdf" onclick="generarPDF()">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+        </button>
     </div>
 
     <div class="total-card">
@@ -207,6 +203,9 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
     </div>
 </div>
 
+<!-- Scripts al final -->
+<script src="frontend/js/logo_base64.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 let reporteActual = null;
 
@@ -261,27 +260,28 @@ async function cargarReporte() {
 }
 
 function generarPDF() {
-    console.log('reporteActual:', reporteActual);
     if (!reporteActual) return;
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const d = reporteActual;
-    let y = 20;
+    let y = 55;
 
+    // Encabezado con logo
     doc.setFillColor(230, 57, 70);
-    doc.rect(0, 0, 210, 35, 'F');
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.addImage(LOGO_BASE64, 'JPEG', 5, 3, 34, 34);
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
-    doc.text('Bar "Los Litros"', 14, 16);
+    doc.text('Bar "Los Litros"', 45, 18);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Reporte de ventas — ${formatearFecha(d.fecha)}`, 14, 27);
+    doc.text(`Reporte de ventas — ${formatearFecha(d.fecha)}`, 45, 30);
 
-    y = 50;
     doc.setTextColor(0, 0, 0);
 
+    // Total del día
     doc.setFillColor(245, 245, 245);
     doc.roundedRect(14, y - 8, 182, 20, 3, 3, 'F');
     doc.setFont('helvetica', 'bold');
