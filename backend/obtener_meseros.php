@@ -1,7 +1,7 @@
 <?php
 include 'config.php';
 
-$res = $conexion->query("SELECT id, username FROM usuarios WHERE rol_id = 3");
+$res = $conexion->query("SELECT id, username FROM usuarios WHERE rol_id = 2");
 
 $meseros = [];
 

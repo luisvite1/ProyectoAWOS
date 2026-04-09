@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,12 +13,13 @@
 <body>
 <?php
 session_start();
-if (!isset($_SESSION['usuario'])) {
+include 'backend/config.php';
+
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
     header('Location: index.html');
     exit;
 }
 
-include 'backend/config.php';
 
 // Obtener usuarios activos
 $sql_activos = "SELECT COUNT(*) as total FROM usuarios WHERE activo = 1";
@@ -82,7 +84,7 @@ $conexion->close();
                     <p>Crea nuevas cuentas para meseros, barra, cocina o seguridad.</p>
                 </div>
 
-                <div class="card" onclick="window.location.href='admin_mesas.html'">
+                <div class="card" onclick="window.location.href='admin_mesas.php'">
                     <div class="card-icon"><i class="fas fa-table"></i></div>
                     <h3>Control de mesas</h3>
                     <p>Visualiza el estado general de las mesas registradas.</p>

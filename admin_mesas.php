@@ -1,3 +1,12 @@
+<?php
+session_start();
+include 'backend/config.php';
+
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
+    header('Location: index.html');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
