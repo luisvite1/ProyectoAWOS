@@ -6,6 +6,12 @@
     <title>Bar "Los Litros" - Login</title>
     <link rel="stylesheet" href="./frontend/css/global.css">
     <link rel="stylesheet" href="./frontend/css/login.css">
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e63946">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Los Litros">
 </head>
 <body>
 
@@ -28,6 +34,14 @@
         </div>
     </div>
 
-    <script src="./frontend/js/auth.js"></script>
+    <script src="./frontend/js/auth.js">   if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/ProyectoAWOS/sw.js')
+            .then(reg => console.log('SW registrado'))
+            .catch(err => console.log('SW error:', err));
+    });
+}</script>
+
+    
 </body>
 </html>

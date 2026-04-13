@@ -62,6 +62,9 @@ $conexion->close();
             <div class="welcome-section">
                 <h2>Hola 👋</h2>
                 <p>Desde aquí puedes gestionar usuarios y mesas del sistema de comendero.</p>
+                <div id="climaWidget" style="margin-top:12px;display:flex;align-items:center;gap:8px;color:white;">
+    <span style="opacity:0.5;font-size:0.85rem">Cargando clima...</span>
+</div>
             </div>
 
             <!-- Accesos rápidos -->
@@ -153,6 +156,21 @@ $conexion->close();
             // Aquí puedes agregar lógica para navegar a diferentes secciones o módulos
             alert('Funcionalidad próximamente disponible: ' + section);
         }
+
+        // Clima Pachuca
+fetch('https://api.openweathermap.org/data/2.5/weather?q=Pachuca,MX&appid=40809668c4a0914f26d241ec73f215e3&units=metric&lang=es')
+    .then(res => res.json())
+    .then(data => {
+        const temp = data.main.temp.toFixed(1);
+        const desc = data.weather[0].description;
+        const icono = data.weather[0].icon;
+        document.getElementById('climaWidget').innerHTML = `
+            <img src="https://openweathermap.org/img/wn/${icono}.png" style="width:40px;vertical-align:middle">
+            <span style="font-size:1.1rem;font-weight:700">${temp}°C</span>
+            <span style="font-size:0.85rem;opacity:0.7;text-transform:capitalize;margin-left:6px">${desc}</span>
+        `;
+    })
+    .catch(() => {});
     </script>
 </body>
 </html>

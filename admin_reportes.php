@@ -183,6 +183,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol_id'] != 1) {
         <div class="label">Total vendido</div>
         <div class="monto" id="totalDia">$0.00</div>
         <div class="fecha-label" id="fechaLabel">—</div>
+        <div class="fecha-label" id="totalUSD" style="margin-top:4px;font-size:0.85rem;opacity:0.8"></div>
     </div>
 
     <div class="grid-reportes">
@@ -243,7 +244,15 @@ async function cargarReporte() {
             <div class="valor">$${parseFloat(p.subtotal).toFixed(2)}</div>
         </div>
     `);
-
+// Tipo de cambio USD
+fetch('https://v6.exchangerate-api.com/v6/5165cc361120cfd2380803b9/latest/MXN')
+    .then(res => res.json())
+    .then(data => {
+        const usd = data.conversion_rates.USD;
+        const totalUSD = (parseFloat(reporteActual.total_dia) * usd).toFixed(2);
+        document.getElementById('totalUSD').textContent = `USD $${totalUSD}`;
+    })
+    .catch(() => document.getElementById('totalUSD').textContent = '');
     renderLista('listaMesas', data.mesas, m => `
         <div class="reporte-item">
             <div class="nombre">${m.mesa}</div>
@@ -259,8 +268,17 @@ async function cargarReporte() {
     `);
 }
 
-function generarPDF() {
+async function generarPDF() {
     if (!reporteActual) return;
+
+    // Obtener tipo de cambio primero
+    let totalUSD = '';
+    try {
+        const resUSD = await fetch('https://v6.exchangerate-api.com/v6/5165cc361120cfd2380803b9/latest/MXN');
+        const dataUSD = await resUSD.json();
+        const usd = dataUSD.conversion_rates.USD;
+        totalUSD = `USD $${(parseFloat(reporteActual.total_dia) * usd).toFixed(2)}`;
+    } catch(e) {}
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -283,14 +301,18 @@ function generarPDF() {
 
     // Total del día
     doc.setFillColor(245, 245, 245);
-    doc.roundedRect(14, y - 8, 182, 20, 3, 3, 'F');
+    doc.roundedRect(14, y - 8, 182, 24, 3, 3, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text('Total del día:', 20, y + 5);
+    doc.text('Total del día:', 20, y + 2);
     doc.setTextColor(230, 57, 70);
-    doc.text(`$${parseFloat(d.total_dia).toFixed(2)}`, 150, y + 5);
+    doc.text(`$${parseFloat(d.total_dia).toFixed(2)}`, 150, y + 2);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    if (totalUSD) doc.text(totalUSD, 150, y + 10);
     doc.setTextColor(0, 0, 0);
-    y += 30;
+    y += 36;
 
     if (d.productos.length > 0) {
         doc.setFont('helvetica', 'bold');
@@ -363,7 +385,6 @@ function generarPDF() {
     doc.text(`Generado el ${new Date().toLocaleString('es-MX')}`, 14, 285);
     doc.save(`reporte_${d.fecha}.pdf`);
 }
-
 function renderLista(id, items, template) {
     const el = document.getElementById(id);
     if (!items || items.length === 0) {
