@@ -6,10 +6,10 @@
 
  // Configuración de conexión a la base de datos
 
-$host = 'localhost';
-$usuario = 'root'; // Usuario por defecto en XAMPP
-$contraseña = ''; // Sin contraseña por defecto en XAMPP
-$base_datos = 'los_litros'; // Nombre de tu base de datos
+$host = 'sql206.infinityfree.com';
+$usuario = 'if0_41648362';
+$contraseña = 'Luis122vl';
+$base_datos = 'if0_41648362_los_litros';
 
 // Crear conexión
 $conexion = new mysqli($host, $usuario, $contraseña, $base_datos);
